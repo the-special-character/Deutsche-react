@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://necolas.github.io/normalize.css/8.0.1/normalize.css"
+    />
+    <style>
+      .wrapper {
+        display: flex;
+        gap: 10px;
+      }
+
+      .wrapper > .box:nth-child(1) {
+        height: 100px;
+        background-color: red;
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: 100px;
+      }
+
+      .wrapper > .box:nth-child(2) {
+        height: 100px;
+        background-color: red;
+        flex-grow: 2;
+        flex-shrink: 1;
+      }
+
+      .wrapper > .box:nth-child(3) {
+        height: 100px;
+        background-color: red;
+        flex-grow: 3;
+        flex-shrink: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+    </div>
+  </body>
+</html>
