@@ -80,10 +80,43 @@
         }
       }
     </script>
+
+    <!-- Specificity  -->
+    <!-- 0 0 0 -->
+
+    <style>
+      /* all the a tag in header tag */
+      /* header a {
+        color: red;
+      } */
+
+      /* only immidiate children of header tag */
+      /* header > a {
+        color: red;
+      } */
+
+      /* immideate sibling */
+      /* nav + a {
+        color: red;
+      } */
+
+      /* all sibling after the tag */
+      nav ~ a {
+        color: red;
+      }
+
+      li a {
+        color: green;
+      }
+    </style>
+
+    <link rel="stylesheet" href="./style.css" />
+    <!-- apply green color to all the element inside li -->
   </head>
   <body>
+    <!-- <h1 class="heading" id="heading1">hello world</h1> -->
     <!-- only 1 h1 per page -->
-    <h1></h1>
+    <!-- <h1></h1>
 
     <form>
       <div>
@@ -108,7 +141,7 @@
         <input type="password" />
       </div>
       <button type="submit">Login</button>
-    </form>
+    </form> -->
 
     <!-- Semantic tags -->
     <!-- meaning full -->
