@@ -1,14 +1,17 @@
-import { Component } from "react";
+import { Component, createRef } from "react";
 import clsx from "clsx";
 
 export default class Todo extends Component {
   // temp variable
   state = {
-    todoText: "",
     todoList: [],
     update: null,
     filter: "all",
   };
+
+  todoTextRef = createRef();
+
+  updateTodoRef = createRef();
 
   onTextChange = (event) => {
     this.setState({ todoText: event.target.value });
@@ -16,19 +19,25 @@ export default class Todo extends Component {
 
   addTodo = (event) => {
     event.preventDefault();
-    this.setState((state) => {
-      return {
-        todoList: [
-          {
-            id: new Date().valueOf(),
-            text: state.todoText,
-            isDone: false,
-          },
-          ...state.todoList,
-        ],
-        todoText: "",
-      };
-    });
+    const todoText = this.todoTextRef.current;
+    this.setState(
+      (state) => {
+        return {
+          todoList: [
+            {
+              id: new Date().valueOf(),
+              text: todoText.value,
+              isDone: false,
+            },
+            ...state.todoList,
+          ],
+          todoText: "",
+        };
+      },
+      () => {
+        todoText.value = "";
+      }
+    );
   };
 
   deleteTodo = (item) => {
@@ -49,12 +58,27 @@ export default class Todo extends Component {
           item,
           ...todoList.slice(index + 1),
         ],
+        update: null,
       };
     });
   };
 
+  updateItem = (event) => {
+    event.preventDefault();
+    const { update } = this.state;
+    this.updateTodo({ ...update, text: this.updateTodoRef.current.value });
+  };
+
+  componentDidUpdate() {
+    const { update } = this.state;
+    if (this.updateTodoRef?.current && update) {
+      this.updateTodoRef.current.value = update.text;
+    }
+  }
+
+  // whenever we change state or props that time it rerender
   render() {
-    const { todoText, todoList, update, filter } = this.state;
+    const { todoList, update, filter } = this.state;
 
     return (
       <div className="flex flex-col items-center h-screen">
@@ -65,11 +89,10 @@ export default class Todo extends Component {
               Todo Text
             </label>
             <input
+              ref={this.todoTextRef}
               type="text"
               id="todoText"
               className="rounded-l-md"
-              value={todoText}
-              onChange={this.onTextChange}
             />
           </div>
           <button
@@ -106,35 +129,38 @@ export default class Todo extends Component {
                     }
                   />
                   {isUpdating ? (
-                    <input
-                      type="text"
-                      value={update.text}
-                      className="flex-1"
-                      onChange={(event) => {
-                        this.setState({
-                          update: { ...update, text: event.target.value },
-                        });
-                      }}
-                    />
+                    <form
+                      onSubmit={this.updateItem}
+                      className="flex-1 flex gap-4 items-center"
+                    >
+                      <input
+                        type="text"
+                        className="flex-1"
+                        ref={this.updateTodoRef}
+                      />
+                      <button
+                        type="submit"
+                        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                      >
+                        Update
+                      </button>
+                    </form>
                   ) : (
-                    <label htmlFor={`idDone-${item.id}`} className="flex-1">
-                      {item.text}
-                    </label>
+                    <>
+                      <label htmlFor={`idDone-${item.id}`} className="flex-1">
+                        {item.text}
+                      </label>
+                      <button
+                        type="button"
+                        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onClick={() => {
+                          this.setState({ update: item });
+                        }}
+                      >
+                        Update
+                      </button>
+                    </>
                   )}
-                  <button
-                    type="button"
-                    className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    onClick={() => {
-                      if (isUpdating) {
-                        this.updateTodo(update);
-                        this.setState({ update: null });
-                      } else {
-                        this.setState({ update: item });
-                      }
-                    }}
-                  >
-                    Update
-                  </button>
                   <button
                     type="button"
                     className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
