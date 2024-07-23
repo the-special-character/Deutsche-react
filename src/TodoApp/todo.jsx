@@ -93,7 +93,16 @@ export default class Todo extends Component {
                   }
                 />
                 {isUpdating ? (
-                  <input type="text" value={item.text} className="flex-1" />
+                  <input
+                    type="text"
+                    value={update.text}
+                    className="flex-1"
+                    onChange={(event) => {
+                      this.setState({
+                        update: { ...update, text: event.target.value },
+                      });
+                    }}
+                  />
                 ) : (
                   <label htmlFor={`idDone-${item.id}`} className="flex-1">
                     {item.text}
@@ -102,7 +111,14 @@ export default class Todo extends Component {
                 <button
                   type="button"
                   className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  onClick={() => this.setState({ update: item })}
+                  onClick={() => {
+                    if (isUpdating) {
+                      this.updateTodo(update);
+                      this.setState({ update: null });
+                    } else {
+                      this.setState({ update: item });
+                    }
+                  }}
                 >
                   Update
                 </button>
