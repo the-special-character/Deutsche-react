@@ -23,7 +23,7 @@ const Register = () => {
         },
       });
       const json = await res.json();
-      console.log(json);
+      localStorage.setItem("user", JSON.stringify(json));
       navigate("/");
     } catch (error) {}
   };
