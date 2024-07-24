@@ -12,31 +12,50 @@ export default class Todo extends Component {
 
   todoTextRef = createRef();
 
-  onTextChange = (event) => {
-    this.setState({ todoText: event.target.value });
+  //
+  componentDidMount() {
+    this.loadData();
+  }
+
+  loadData = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/todoList");
+      const json = await res.json();
+      this.setState({ todoList: json });
+    } catch (error) {}
   };
 
-  addTodo = (event) => {
-    event.preventDefault();
-    const todoText = this.todoTextRef.current;
-    this.setState(
-      (state) => {
-        return {
-          todoList: [
-            {
-              id: new Date().valueOf(),
-              text: todoText.value,
-              isDone: false,
-            },
-            ...state.todoList,
-          ],
-          todoText: "",
-        };
-      },
-      () => {
-        todoText.value = "";
-      }
-    );
+  addTodo = async (event) => {
+    try {
+      event.preventDefault();
+
+      const todoText = this.todoTextRef.current;
+
+      const res = await fetch("http://localhost:3000/todoList", {
+        method: "POST",
+        body: JSON.stringify({
+          text: todoText.value,
+          isDone: false,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      const json = await res.json();
+
+      this.setState(
+        (state) => {
+          return {
+            todoList: [...state.todoList, json],
+            todoText: "",
+          };
+        },
+        () => {
+          todoText.value = "";
+        }
+      );
+    } catch (error) {}
   };
 
   deleteTodo = (item) => {
@@ -48,17 +67,29 @@ export default class Todo extends Component {
     });
   };
 
-  updateTodo = (item) => {
-    this.setState(({ todoList }) => {
-      const index = todoList.findIndex((x) => x.id === item.id);
-      return {
-        todoList: [
-          ...todoList.slice(0, index),
-          item,
-          ...todoList.slice(index + 1),
-        ],
-      };
-    });
+  updateTodo = async (item) => {
+    try {
+      const res = await fetch(`http://localhost:3000/todoList/${item.id}`, {
+        method: "PUT",
+        body: JSON.stringify(item),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      const json = await res.json();
+
+      this.setState(({ todoList }) => {
+        const index = todoList.findIndex((x) => x.id === item.id);
+        return {
+          todoList: [
+            ...todoList.slice(0, index),
+            json,
+            ...todoList.slice(index + 1),
+          ],
+        };
+      });
+    } catch (error) {}
   };
 
   filterTodo = (filterType) => {
