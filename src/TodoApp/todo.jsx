@@ -17,11 +17,15 @@ export default class Todo extends Component {
     this.loadData();
   }
 
-  loadData = async () => {
+  loadData = async (filterType = "all") => {
     try {
-      const res = await fetch("http://localhost:3000/todoList");
+      let url = "http://localhost:3000/todoList";
+      if (filterType !== "all") {
+        url += `?isDone=${filterType === "completed"}`;
+      }
+      const res = await fetch(url);
       const json = await res.json();
-      this.setState({ todoList: json });
+      this.setState({ todoList: json, filter: filterType });
     } catch (error) {}
   };
 
@@ -58,13 +62,19 @@ export default class Todo extends Component {
     } catch (error) {}
   };
 
-  deleteTodo = (item) => {
-    this.setState(({ todoList }) => {
-      const index = todoList.findIndex((x) => x.id === item.id);
-      return {
-        todoList: [...todoList.slice(0, index), ...todoList.slice(index + 1)],
-      };
-    });
+  deleteTodo = async (item) => {
+    try {
+      await fetch(`http://localhost:3000/todoList/${item.id}`, {
+        method: "DELETE",
+      });
+
+      this.setState(({ todoList }) => {
+        const index = todoList.findIndex((x) => x.id === item.id);
+        return {
+          todoList: [...todoList.slice(0, index), ...todoList.slice(index + 1)],
+        };
+      });
+    } catch (error) {}
   };
 
   updateTodo = async (item) => {
@@ -92,10 +102,6 @@ export default class Todo extends Component {
     } catch (error) {}
   };
 
-  filterTodo = (filterType) => {
-    this.setState({ filter: filterType });
-  };
-
   // whenever we change state or props that time it rerender
   render() {
     const { todoList, filter } = this.state;
@@ -110,7 +116,7 @@ export default class Todo extends Component {
           updateTodo={this.updateTodo}
           deleteTodo={this.deleteTodo}
         />
-        <TodoFilter filter={filter} filterTodo={this.filterTodo} />
+        <TodoFilter filter={filter} filterTodo={this.loadData} />
       </div>
     );
   }

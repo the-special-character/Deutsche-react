@@ -2,25 +2,18 @@ import { memo } from "react";
 import PropTypes from "prop-types";
 import TodoItem from "./todoItem";
 
-const TodoList = ({ todoList, updateTodo, deleteTodo, filter }) => {
+const TodoList = ({ todoList, updateTodo, deleteTodo }) => {
   return (
     <ul className="w-full flex-1 overflow-auto">
       {todoList.map((item) => {
-        if (
-          filter === "all" ||
-          (filter === "pending" && !item.isDone) ||
-          (filter === "completed" && item.isDone)
-        ) {
-          return (
-            <TodoItem
-              key={item.id}
-              item={item}
-              updateTodo={updateTodo}
-              deleteTodo={deleteTodo}
-            />
-          );
-        }
-        return null;
+        return (
+          <TodoItem
+            key={item.id}
+            item={item}
+            updateTodo={updateTodo}
+            deleteTodo={deleteTodo}
+          />
+        );
       })}
     </ul>
   );
@@ -36,7 +29,6 @@ TodoList.propTypes = {
   ).isRequired,
   updateTodo: PropTypes.func.isRequired,
   deleteTodo: PropTypes.func.isRequired,
-  filter: PropTypes.oneOf(["all", "pending", "completed"]).isRequired,
 };
 
 export default memo(TodoList);
