@@ -1,9 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
-import Todo from "./TodoApp/todo.jsx";
 import Login from "./screens/login.jsx";
 import Register from "./screens/register.jsx";
 import AuthLayout from "./layouts/authLayout.jsx";
 import MainLayout from "./layouts/mainLayout.jsx";
+import Home from "./screens/home.jsx";
 
 const router = createBrowserRouter([
   {
@@ -12,7 +12,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Todo />,
+        element: <Home />,
       },
       {
         path: "/contact",
